@@ -1,0 +1,15 @@
+package application;
+
+import javafx.scene.paint.Color;
+
+public class Circle {
+
+	private static Color[ ][ ]	map;
+
+	private int					x, y, r;
+
+	public Circle(final int x, final int y, final int r) {
+
+	}
+
+}

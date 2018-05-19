@@ -1,0 +1,65 @@
+package application;
+
+import java.util.ArrayList;
+
+import javafx.scene.paint.Color;
+
+public class Circle {
+
+	private static Color[ ][ ] map;
+
+	public static Color[ ][ ] getMap( ) {
+
+		return map;
+	}
+
+	public static void setMap(final Color[ ][ ] map) {
+
+		Circle.map = map;
+	}
+
+	private final int x, y, r;
+
+	public Circle(final int x, final int y, final int r) {
+
+		this.x = x;
+		this.y = y;
+		this.r = r;
+	}
+
+	public int getR( ) {
+
+		return r;
+	}
+
+	public int getX( ) {
+
+		return x;
+	}
+
+	public int getY( ) {
+
+		return y;
+	}
+
+	public boolean hasNumColors(final byte numColors) {
+
+		ArrayList<Color> seen = new ArrayList<>( );
+		seen.add(map[x][y]);
+
+		for (double theta = 0; theta < (Math.PI * 2); theta += .5) {
+			for (double rad = 0; rad < r; rad += .5) {
+				int xLoc = (int) (x + (Math.cos(theta) * r));
+				int yLoc = (int) (y + (Math.sin(theta) * r));
+
+				Color c = map[x][y];
+
+				if (!seen.contains(c)) {
+					seen.add(c);
+				}
+			}
+		}
+		return seen.size( ) >= numColors;
+	}
+
+}

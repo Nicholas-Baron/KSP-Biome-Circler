@@ -1,0 +1,8 @@
+1526631441705	Rename local variable 'root'
+1526668371468	Encapsulate field 'map'
+1526668394993	Encapsulate field 'x'
+1526668400809	Encapsulate field 'y'
+1526668405117	Encapsulate field 'r'
+1526669339249	Rename local variable 'border'
+1526671269395	Delete element
+1526672081951	Rename local variable 'grid'

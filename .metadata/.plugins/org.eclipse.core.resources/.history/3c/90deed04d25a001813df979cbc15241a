@@ -1,0 +1,186 @@
+package application;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+
+	private static final int width = 800, height = 600;
+
+	public static void main(final String[ ] args) {
+
+		launch(args);
+
+	}
+
+	private ImageView		viewer;
+
+	private PixelReader		reader;
+
+	private Color[ ][ ]		colors;
+
+	private PixelWriter		writer;
+
+	private GraphicsContext	gc;
+
+	private WritableImage	wImg;
+
+	private double			circleRadius;
+
+	private byte			minNumColors	= 2;
+
+	private void computeCircles( ) {
+
+		double offset = circleRadius / Math.sqrt(2);
+		double distance = circleRadius * Math.sqrt(2);
+
+		for (double x = offset; x < (wImg.getWidth( ) - offset); x += distance) {
+			for (double y = offset; y < (wImg.getHeight( ) - offset); y += distance) {
+				Circle c = new Circle(x, y, circleRadius);
+
+				if (c.hasNumColors(minNumColors)) {
+
+					double dia = (circleRadius * 2);
+					double xLoc = x - dia;
+					double yLoc = y - dia;
+					gc.strokeOval(xLoc, yLoc, dia, dia);
+				}
+			}
+		}
+
+	}
+
+	private void setScreenElements(final GridPane grid, final Stage stage) throws FileNotFoundException {
+
+		FileChooser chooser = new FileChooser( );
+		chooser.setInitialDirectory(new File("res"));
+		Button fileOpen = new Button("Open Biome Map");
+		fileOpen.setOnAction(e -> {
+			File imageFile = chooser.showOpenDialog(stage);
+			try {
+				setViewer(imageFile, grid);
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace( );
+			}
+		});
+		grid.add(fileOpen, 0, 0);
+
+		Label radius = new Label("Radius of Search Circles:");
+		grid.add(radius, 1, 0);
+
+		TextField size = new TextField( );
+		size.setOnAction(e -> {
+			circleRadius = Double.valueOf(size.getText( ));
+			System.out.println("Circle Radius is now " + circleRadius);
+		});
+		grid.add(size, 2, 0);
+
+		Label numColors = new Label("Radius of Search Circles:");
+		grid.add(numColors, 3, 0);
+
+		TextField min = new TextField( );
+		min.setOnAction(e -> {
+			minNumColors = Byte.parseByte(min.getText( ));
+			System.out.println("Minimum Colors is now " + minNumColors);
+		});
+		grid.add(min, 4, 0);
+
+		Button compute = new Button("Compute");
+		compute.setOnAction(e -> {
+			if (!min.getText( ).isEmpty( ) && !size.getText( ).isEmpty( )) {
+				minNumColors = Byte.parseByte(min.getText( ));
+				System.out.println("Minimum Colors is now " + minNumColors);
+
+				circleRadius = Double.valueOf(size.getText( ));
+				System.out.println("Circle Radius is now " + circleRadius);
+
+				computeCircles( );
+			}
+		});
+		grid.add(compute, 5, 0);
+
+		Canvas c = new Canvas(grid.getWidth( ), 200);
+		gc = c.getGraphicsContext2D( );
+		grid.add(c, 0, 1);
+	}
+
+	private void setViewer(final File img, final Pane pane) throws FileNotFoundException {
+
+		Image image = new Image(new FileInputStream(img));
+		viewer = new ImageView( );
+		viewer.setImage(image);
+		viewer.setFitWidth(grid.getWidth( ));
+		viewer.setPreserveRatio(true);
+
+		if (!image.isError( )) {
+			System.out.println("Successfully read " + img.getPath( ));
+			reader = image.getPixelReader( );
+			wImg = new WritableImage((int) image.getWidth( ), (int) image.getHeight( ));
+			writer = wImg.getPixelWriter( );
+			colors = new Color[(int) image.getWidth( )][(int) image.getHeight( )];
+
+			for (int x = 0; x < image.getWidth( ); x++) {
+				for (int y = 0; y < image.getHeight( ); y++) {
+					colors[x][y] = reader.getColor(x, y);
+					writer.setColor(x, y, colors[x][y]);
+				}
+			}
+
+			Circle.setMap(colors);
+			viewer.setImage(wImg);
+			grid.add(viewer, 0, 1);
+		}
+
+	}
+
+	@Override
+	public void start(final Stage primaryStage) {
+
+		try {
+			GridPane grid = new GridPane( );
+			grid.setMinSize((width * 3) / 4, (height * 3) / 4);
+			grid.setVgap(5);
+			grid.setHgap(5);
+			grid.setAlignment(Pos.TOP_LEFT);
+
+			Scene scene = new Scene(grid);
+
+			setScreenElements(grid, primaryStage);
+
+			primaryStage.setScene(scene);
+			primaryStage.setTitle("KSP Biome Finder");
+			primaryStage.setMinWidth(width);
+			primaryStage.setMinHeight(height);
+			primaryStage.show( );
+
+		} catch (Exception e) {
+			e.printStackTrace( );
+		}
+
+		System.out.println("Success on starting");
+	}
+
+	@Override
+	public void stop( ) {
+
+	}
+}
