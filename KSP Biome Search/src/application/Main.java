@@ -51,7 +51,7 @@ public class Main extends Application {
 
 	private final Pane		truePane		= new Pane( );
 
-	private Color			circleColor		= Color.BLUE;
+	private Color			circleColor		= Color.BLACK;
 
 	private String			currentView		= "";
 
