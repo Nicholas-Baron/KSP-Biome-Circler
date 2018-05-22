@@ -1,20 +1,14 @@
 package application;
 
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import javafx.application.Application;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -51,11 +45,7 @@ public class Main extends Application {
 
 	private final Pane		truePane		= new Pane( );
 
-	private Color			circleColor		= Color.BLUE;
-
-	private String			currentView		= "";
-
-	private boolean			drawPerimeters	= false;
+	private Color			centerColor		= Color.BLUE;
 
 	private void computeCircles( ) {
 
@@ -63,7 +53,7 @@ public class Main extends Application {
 		double distance = circleRadius;
 
 		for (double i = 0; i < circleRadius; i++) {
-			writer.setColor((int) i, 0, circleColor);
+			writer.setColor((int) i, 0, centerColor);
 		}
 
 		for (double x = offset; x < (wImg.getWidth( ) - offset); x += distance) {
@@ -71,30 +61,22 @@ public class Main extends Application {
 				Circle c = new Circle(x, y, circleRadius);
 
 				if (c.hasNumColors(minNumColors)) {
-					if (drawPerimeters) {
-						for (double theta = 0; theta < (Math.PI * 2); theta += .1) {
-							int xLoc = (int) (x + (Math.cos(theta) * circleRadius));
-							int yLoc = (int) (y + (Math.sin(theta) * circleRadius));
-							writer.setColor(xLoc, yLoc, circleColor);
-						}
-					}
-
-					writer.setColor((int) x, (int) y, circleColor);
-					writer.setColor((int) x + 1, (int) y, circleColor);
-					writer.setColor((int) x - 1, (int) y, circleColor);
-					writer.setColor((int) x, (int) y + 1, circleColor);
-					writer.setColor((int) x, (int) y - 1, circleColor);
-
+					// System.out.println("Found option at " + x + ", " + y);
+					writer.setColor((int) x, (int) y, centerColor);
+					writer.setColor((int) x + 1, (int) y, centerColor);
+					writer.setColor((int) x - 1, (int) y, centerColor);
+					writer.setColor((int) x, (int) y + 1, centerColor);
+					writer.setColor((int) x, (int) y - 1, centerColor);
 				}
 			}
 		}
 
 	}
-
+	
 	private void setScreenElements(final GridPane grid, final Stage stage) throws FileNotFoundException {
 
 		int pos = 0;
-
+		
 		FileChooser chooser = new FileChooser( );
 		chooser.setInitialDirectory(new File("res"));
 		Button fileOpen = new Button("Open Biome Map");
@@ -117,12 +99,6 @@ public class Main extends Application {
 			System.out.println("Circle Radius is now " + circleRadius);
 		});
 		grid.add(size, pos++, 0);
-
-		ToggleButton drawCircumfrence = new ToggleButton("Draw Circle Perimeters");
-		drawCircumfrence.setOnAction(e -> {
-			drawPerimeters = drawCircumfrence.isSelected( );
-		});
-		grid.add(drawCircumfrence, pos++, 0);
 
 		Label numColors = new Label("Minimum Number of Colors:");
 		grid.add(numColors, pos++, 0);
@@ -150,15 +126,7 @@ public class Main extends Application {
 		grid.add(compute, pos++, 0);
 
 		Button saveMap = new Button("Save Map");
-		saveMap.setOnAction(e -> {
-			File f = new File("res/" + currentView + "_r-" + circleRadius + "_mc-" + minNumColors + "_dc-" + drawPerimeters + ".png");
-			RenderedImage image = SwingFXUtils.fromFXImage(wImg, null);
-			try {
-				ImageIO.write(image, "png", f);
-			} catch (IOException e1) {
-				e1.printStackTrace( );
-			}
-		});
+		saveMap.setOnAction(e -> {});
 		grid.add(saveMap, pos++, 0);
 	}
 
@@ -167,7 +135,6 @@ public class Main extends Application {
 		if (img == null) return;
 
 		Image image = new Image(new FileInputStream(img));
-		currentView = img.getName( );
 		viewer = new ImageView( );
 		viewer.setImage(image);
 		viewer.setFitWidth(1750);
@@ -185,7 +152,7 @@ public class Main extends Application {
 					colors[x][y] = reader.getColor(x, y);
 					writer.setColor(x, y, colors[x][y]);
 
-					if (colors[x][y] == circleColor) {
+					if (colors[x][y] == centerColor) {
 						System.out.println("Found center color on map. May be difficult to read.");
 					}
 				}

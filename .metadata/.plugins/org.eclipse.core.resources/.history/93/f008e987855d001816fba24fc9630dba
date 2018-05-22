@@ -72,7 +72,7 @@ public class Main extends Application {
 
 				if (c.hasNumColors(minNumColors)) {
 					if (drawPerimeters) {
-						for (double theta = 0; theta < (Math.PI * 2); theta += .1) {
+						for (double theta = 0; theta < (Math.PI * 2); theta += .5) {
 							int xLoc = (int) (x + (Math.cos(theta) * circleRadius));
 							int yLoc = (int) (y + (Math.sin(theta) * circleRadius));
 							writer.setColor(xLoc, yLoc, circleColor);
@@ -151,7 +151,7 @@ public class Main extends Application {
 
 		Button saveMap = new Button("Save Map");
 		saveMap.setOnAction(e -> {
-			File f = new File("res/" + currentView + "_r-" + circleRadius + "_mc-" + minNumColors + "_dc-" + drawPerimeters + ".png");
+			File f = new File("res/" + currentView + "_r" + circleRadius + "_mc" + minNumColors + ".png");
 			RenderedImage image = SwingFXUtils.fromFXImage(wImg, null);
 			try {
 				ImageIO.write(image, "png", f);

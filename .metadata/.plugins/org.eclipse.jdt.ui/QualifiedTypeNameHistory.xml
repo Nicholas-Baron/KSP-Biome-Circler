@@ -17,4 +17,8 @@
 <fullyQualifiedTypeName name="javafx.scene.control.TextField"/>
 <fullyQualifiedTypeName name="javafx.scene.control.Label"/>
 <fullyQualifiedTypeName name="javafx.scene.layout.Pane"/>
+<fullyQualifiedTypeName name="javafx.embed.swing.SwingFXUtils"/>
+<fullyQualifiedTypeName name="java.awt.image.RenderedImage"/>
+<fullyQualifiedTypeName name="javax.imageio.ImageIO"/>
+<fullyQualifiedTypeName name="javafx.scene.control.ToggleButton"/>
 </qualifiedTypeNameHistroy>

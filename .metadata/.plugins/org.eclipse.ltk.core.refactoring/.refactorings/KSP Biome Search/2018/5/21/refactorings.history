@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;centerColor&apos; in &apos;application.Main&apos; to &apos;circleColor&apos;&#x0D;&#x0A;- Original project: &apos;KSP Biome Search&apos;&#x0D;&#x0A;- Original element: &apos;application.Main.centerColor&apos;&#x0D;&#x0A;- Renamed element: &apos;application.Main.circleColor&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;centerColor&apos;" flags="589826" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;application{Main.java[Main^centerColor" name="circleColor" references="true" setter="false" stamp="1526968773654" textual="false" version="1.0"/>
+</session>

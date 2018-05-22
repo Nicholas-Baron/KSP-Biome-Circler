@@ -51,7 +51,7 @@ public class Main extends Application {
 
 	private final Pane		truePane		= new Pane( );
 
-	private Color			circleColor		= Color.BLUE;
+	private Color			centerColor		= Color.BLUE;
 
 	private String			currentView		= "";
 
@@ -63,28 +63,20 @@ public class Main extends Application {
 		double distance = circleRadius;
 
 		for (double i = 0; i < circleRadius; i++) {
-			writer.setColor((int) i, 0, circleColor);
+			writer.setColor((int) i, 0, centerColor);
 		}
 
 		for (double x = offset; x < (wImg.getWidth( ) - offset); x += distance) {
 			for (double y = offset; y < (wImg.getHeight( ) - offset); y += distance) {
 				Circle c = new Circle(x, y, circleRadius);
 
-				if (c.hasNumColors(minNumColors)) {
-					if (drawPerimeters) {
-						for (double theta = 0; theta < (Math.PI * 2); theta += .1) {
-							int xLoc = (int) (x + (Math.cos(theta) * circleRadius));
-							int yLoc = (int) (y + (Math.sin(theta) * circleRadius));
-							writer.setColor(xLoc, yLoc, circleColor);
-						}
-					}
-
-					writer.setColor((int) x, (int) y, circleColor);
-					writer.setColor((int) x + 1, (int) y, circleColor);
-					writer.setColor((int) x - 1, (int) y, circleColor);
-					writer.setColor((int) x, (int) y + 1, circleColor);
-					writer.setColor((int) x, (int) y - 1, circleColor);
-
+				if (c.hasNumColors(minNumColors) ) {
+					if(circleRadius > 2) {
+					writer.setColor((int) x, (int) y, centerColor);
+					writer.setColor((int) x + 1, (int) y, centerColor);
+					writer.setColor((int) x - 1, (int) y, centerColor);
+					writer.setColor((int) x, (int) y + 1, centerColor);
+					writer.setColor((int) x, (int) y - 1, centerColor);}
 				}
 			}
 		}
@@ -151,7 +143,7 @@ public class Main extends Application {
 
 		Button saveMap = new Button("Save Map");
 		saveMap.setOnAction(e -> {
-			File f = new File("res/" + currentView + "_r-" + circleRadius + "_mc-" + minNumColors + "_dc-" + drawPerimeters + ".png");
+			File f = new File("res/" + currentView + "_r" + circleRadius + "_mc" + minNumColors + ".png");
 			RenderedImage image = SwingFXUtils.fromFXImage(wImg, null);
 			try {
 				ImageIO.write(image, "png", f);
@@ -185,7 +177,7 @@ public class Main extends Application {
 					colors[x][y] = reader.getColor(x, y);
 					writer.setColor(x, y, colors[x][y]);
 
-					if (colors[x][y] == circleColor) {
+					if (colors[x][y] == centerColor) {
 						System.out.println("Found center color on map. May be difficult to read.");
 					}
 				}
