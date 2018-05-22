@@ -39,7 +39,7 @@ public class Circle {
 		ArrayList<Color> seen = new ArrayList<>( );
 		seen.add(map[(int) x][(int) y]);
 
-		for (double theta = 0; theta < (Math.PI * 2); theta += .1) {
+		for (double theta = 0; theta < (Math.PI * 2); theta += .5) {
 			for (double rad = 0; rad < r; rad += .5) {
 				int xLoc = (int) (x + (Math.cos(theta) * r));
 				int yLoc = (int) (y + (Math.sin(theta) * r));

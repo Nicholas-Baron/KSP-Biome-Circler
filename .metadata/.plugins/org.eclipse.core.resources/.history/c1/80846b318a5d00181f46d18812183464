@@ -43,7 +43,7 @@ public class Main extends Application {
 
 	private PixelWriter		writer;
 
-	private WritableImage	editedImage;
+	private WritableImage	wImg;
 
 	private double			circleRadius;
 
@@ -57,19 +57,9 @@ public class Main extends Application {
 
 	private boolean			drawPerimeters	= false;
 
-	private WritableImage	original;
-
-	private boolean			written			= false;
-
+	private WritableImage original;
+	
 	private void computeCircles( ) {
-
-		if (written) {
-			for (int x = 0; x < original.getWidth( ); x++) {
-				for (int y = 0; y < original.getHeight( ); y++) {
-					writer.setColor(x, y, original.getPixelReader( ).getColor(x, y));
-				}
-			}
-		}
 
 		double offset = circleRadius / Math.sqrt(2);
 		double distance = circleRadius;
@@ -78,8 +68,8 @@ public class Main extends Application {
 			writer.setColor((int) i, 0, circleColor);
 		}
 
-		for (double x = offset; x < (editedImage.getWidth( ) - offset); x += distance) {
-			for (double y = offset; y < (editedImage.getHeight( ) - offset); y += distance) {
+		for (double x = offset; x < (wImg.getWidth( ) - offset); x += distance) {
+			for (double y = offset; y < (wImg.getHeight( ) - offset); y += distance) {
 				Circle c = new Circle(x, y, circleRadius);
 
 				if (c.hasNumColors(minNumColors)) {
@@ -87,10 +77,7 @@ public class Main extends Application {
 						for (double theta = 0; theta < (Math.PI * 2); theta += .05) {
 							int xLoc = (int) (x + (Math.cos(theta) * circleRadius));
 							int yLoc = (int) (y + (Math.sin(theta) * circleRadius));
-
-							if ((xLoc >= 0) && (yLoc >= 0)) {
-								writer.setColor(xLoc, yLoc, circleColor);
-							}
+							writer.setColor(xLoc, yLoc, circleColor);
 						}
 					}
 
@@ -104,8 +91,6 @@ public class Main extends Application {
 			}
 		}
 
-		written = true;
-
 	}
 
 	private void setScreenElements(final GridPane grid, final Stage stage) throws FileNotFoundException {
@@ -113,7 +98,7 @@ public class Main extends Application {
 		int pos = 0;
 
 		FileChooser chooser = new FileChooser( );
-		chooser.setInitialDirectory(new File("."));
+		chooser.setInitialDirectory(new File("res"));
 		Button fileOpen = new Button("Open Biome Map");
 		fileOpen.setOnAction(e -> {
 			File imageFile = chooser.showOpenDialog(stage);
@@ -169,7 +154,7 @@ public class Main extends Application {
 		Button saveMap = new Button("Save Map");
 		saveMap.setOnAction(e -> {
 			File f = new File("res/" + currentView + "_r-" + circleRadius + "_mc-" + minNumColors + "_dc-" + drawPerimeters + ".png");
-			RenderedImage image = SwingFXUtils.fromFXImage(editedImage, null);
+			RenderedImage image = SwingFXUtils.fromFXImage(wImg, null);
 			try {
 				ImageIO.write(image, "png", f);
 			} catch (IOException e1) {
@@ -193,18 +178,14 @@ public class Main extends Application {
 		if (!image.isError( )) {
 			System.out.println("Successfully read " + img.getPath( ));
 			reader = image.getPixelReader( );
-			original = new WritableImage((int) image.getWidth( ), (int) image.getHeight( ));
-			editedImage = new WritableImage((int) image.getWidth( ), (int) image.getHeight( ));
-			writer = editedImage.getPixelWriter( );
+			wImg = new WritableImage((int) image.getWidth( ), (int) image.getHeight( ));
+			writer = wImg.getPixelWriter( );
 			colors = new Color[(int) image.getWidth( )][(int) image.getHeight( )];
-
-			PixelWriter origWrite = original.getPixelWriter( );
 
 			for (int x = 0; x < image.getWidth( ); x++) {
 				for (int y = 0; y < image.getHeight( ); y++) {
 					colors[x][y] = reader.getColor(x, y);
 					writer.setColor(x, y, colors[x][y]);
-					origWrite.setColor(x, y, colors[x][y]);
 
 					if (colors[x][y] == circleColor) {
 						System.out.println("Found center color on map. May be difficult to read.");
@@ -213,7 +194,7 @@ public class Main extends Application {
 			}
 
 			Circle.setMap(colors);
-			viewer.setImage(editedImage);
+			viewer.setImage(wImg);
 			viewer.relocate(0, 50);
 			truePane.getChildren( ).add(viewer);
 		}

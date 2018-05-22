@@ -63,13 +63,7 @@ public class Main extends Application {
 
 	private void computeCircles( ) {
 
-		if (written) {
-			for (int x = 0; x < original.getWidth( ); x++) {
-				for (int y = 0; y < original.getHeight( ); y++) {
-					writer.setColor(x, y, original.getPixelReader( ).getColor(x, y));
-				}
-			}
-		}
+		if (written) {}
 
 		double offset = circleRadius / Math.sqrt(2);
 		double distance = circleRadius;
@@ -87,10 +81,7 @@ public class Main extends Application {
 						for (double theta = 0; theta < (Math.PI * 2); theta += .05) {
 							int xLoc = (int) (x + (Math.cos(theta) * circleRadius));
 							int yLoc = (int) (y + (Math.sin(theta) * circleRadius));
-
-							if ((xLoc >= 0) && (yLoc >= 0)) {
-								writer.setColor(xLoc, yLoc, circleColor);
-							}
+							writer.setColor(xLoc, yLoc, circleColor);
 						}
 					}
 
@@ -113,7 +104,7 @@ public class Main extends Application {
 		int pos = 0;
 
 		FileChooser chooser = new FileChooser( );
-		chooser.setInitialDirectory(new File("."));
+		chooser.setInitialDirectory(new File("res"));
 		Button fileOpen = new Button("Open Biome Map");
 		fileOpen.setOnAction(e -> {
 			File imageFile = chooser.showOpenDialog(stage);
